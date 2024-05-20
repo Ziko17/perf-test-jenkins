@@ -1,5 +1,7 @@
 pipeline {
-    agent perf
+    agent {
+        label 'perf'
+    }
 
     stages {
         stage('Build') {
