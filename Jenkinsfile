@@ -21,10 +21,12 @@ pipeline {
         }
         stage('Perf test') { // Dump logs & Threads
             steps {
-                echo 'Installing locust'
-                sh 'pip3 install locust'
-                sh 'locust --headless --users 10 --spawn-rate 1 --run-time 10 -H http://localhost:8100'
+                script {
+                     docker.image('locustio/locust').inside("--entrypoint=''") {
+                             sh 'locust --headless --users 5 --spawn-rate 1 --run-time 5 -H http://localhost:8100'
+                 }
             }
+        }
         }
         stage('Destroy') { // If the infra does not get destroyed, the log of the rest of its existance must be dumped also
             steps {
@@ -32,5 +34,5 @@ pipeline {
                 echo 'Destroying...'
             }
         }
-    }
+}
 }
