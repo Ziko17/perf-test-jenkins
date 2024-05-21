@@ -1,7 +1,8 @@
 pipeline {
-    agent {
-        label 'perf'
-    }
+    // agent {
+    //     label 'perf'
+    // }
+    agent any
 
     stages {
         stage('Build') {
