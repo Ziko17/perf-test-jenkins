@@ -2,4 +2,5 @@ FROM jenkins/ssh-agent:alpine-jdk17
 
 ## Install docker
 
-RUN apk add --update docker openrc
+RUN apk update && \
+    apk add --no-cache docker

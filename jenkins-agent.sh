@@ -7,4 +7,6 @@ echo $PUB_KEY
 
 docker run -d --rm --name=$AGENT_NAME -p 4022:22 \
 -e "JENKINS_AGENT_SSH_PUBKEY=$PUB_KEY" \
-jenkins-agent:1.0
+-v "/var/run/docker.sock:/var/run/docker.sock:rw" \
+--privileged \
+jenkins-agent:1.0 

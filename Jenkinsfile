@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        label 'perf'
+        label 'kubeagent'
     }
     
     stages {
