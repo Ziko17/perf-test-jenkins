@@ -7,4 +7,4 @@ echo $PUB_KEY
 
 docker run -d --rm --name=$AGENT_NAME -p 4022:22 \
 -e "JENKINS_AGENT_SSH_PUBKEY=$PUB_KEY" \
-jenkins/ssh-agent:alpine-jdk17
+jenkins-agent:1.0
