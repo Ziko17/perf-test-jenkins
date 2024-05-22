@@ -22,10 +22,17 @@ pipeline {
         stage('Perf test') { // Dump logs & Threads
             steps {
                 script {
-                    sh 'locust --headless --users 5 --tag get --spawn-rate 1 --run-time 5 -H http://localhost:8100'
-                     
-        }
-        }
+                    
+                    try {
+                        sh 'locust --headless --users 5 --tag get --html report.hml --spawn-rate 1 --run-time 5 -H http://localhost:8100'
+                        publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: '.', reportFiles: 'report.html', reportName: 'HTML Report', reportTitles: 'Perf Report', useWrapperFileDirectly: true])
+                    }
+                    catch(err) {
+                        publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: '.', reportFiles: 'report.html', reportName: 'HTML Report', reportTitles: 'Perf Report', useWrapperFileDirectly: true])
+                    }
+                }
+                
+            }
         }
         stage('Destroy') { // If the infra does not get destroyed, the log of the rest of its existance must be dumped also
             steps {
