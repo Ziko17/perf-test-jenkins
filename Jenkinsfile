@@ -22,10 +22,9 @@ pipeline {
         stage('Perf test') { // Dump logs & Threads
             steps {
                 script {
-                     docker.image('locustio/locust').inside("--entrypoint=''") {
-                             sh 'locust --headless --users 5 --spawn-rate 1 --run-time 5 -H http://localhost:8100'
-                 }
-            }
+                    sh 'locust --headless --users 5 --tag get --spawn-rate 1 --run-time 5 -H http://localhost:8100'
+                     
+        }
         }
         }
         stage('Destroy') { // If the infra does not get destroyed, the log of the rest of its existance must be dumped also
