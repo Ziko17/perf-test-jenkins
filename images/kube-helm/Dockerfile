@@ -1,16 +1,12 @@
 FROM jenkins/inbound-agent:alpine as jnlp
 
-FROM bitnami/kubectl:1.30
+FROM alpine/helm
 
 USER root
 
-RUN apt-get update && \
-    apt-get install curl -y && \
-    curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 && \
-    chmod 700 get_helm.sh && \
-    ./get_helm.sh
+RUN apk -U add openjdk11-jre
 
-RUN useradd -m jenkins
+RUN adduser -h /home/jenkins -S jenkins 
 
 USER jenkins
 
