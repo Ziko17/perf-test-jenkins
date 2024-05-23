@@ -19,7 +19,7 @@ pipeline {
         }
         stage('Deploy') {
             agent {
-                label 'helm'
+                label 'helmagent'
             }
             steps {
                 script {
