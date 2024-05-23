@@ -1,26 +1,36 @@
 pipeline {
-    
-    agent {
-        label 'kubeagent'
-    }
-    
+    agent none
     stages {
         stage('Build') {
+            agent {
+                label 'kubeagent'
+            }
             steps {
                 echo 'Building...'
             }
         }
         stage('Test') {
+            agent {
+                label 'kubeagent'
+            }
             steps {
                 echo 'Testing...'
             }
         }
         stage('Deploy') {
+            agent {
+                label 'helm'
+            }
             steps {
-                echo 'Deploying...'
+                script {
+                    sh 'helm list --kube-apiserver https://192.168.49.2:8443'
+                }
             }
         }
         stage('Perf test') { // Dump logs & Threads
+            agent {
+                label 'kubeagent'
+            }
             steps {
                 script {
                         sh 'mkdir perf_report/'
@@ -30,6 +40,9 @@ pipeline {
             }
         }
         stage('Destroy') { // If the infra does not get destroyed, the log of the rest of its existance must be dumped also
+            agent {
+                label 'kubeagent'
+            }
             steps {
                 input message: 'Do you want to destroy the infra now ? If you choose no, the infra will be destroyed after 3 days.', ok: 'Yes', submitterParameter: 'APPROVER' //submitterParameter adds a link to a submit page 
                 echo 'Destroying...'
