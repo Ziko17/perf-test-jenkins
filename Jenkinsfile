@@ -1,4 +1,5 @@
 pipeline {
+    
     agent {
         label 'kubeagent'
     }
@@ -22,14 +23,8 @@ pipeline {
         stage('Perf test') { // Dump logs & Threads
             steps {
                 script {
-                    
-                    try {
-                        sh 'locust --headless --users 5 --tag get --html report.hml --spawn-rate 1 --run-time 5 -H http://localhost:8100'
-                        publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: '.', reportFiles: 'report.html', reportName: 'HTML Report', reportTitles: 'Perf Report', useWrapperFileDirectly: true])
-                    }
-                    catch(err) {
-                        publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: '.', reportFiles: 'report.html', reportName: 'HTML Report', reportTitles: 'Perf Report', useWrapperFileDirectly: true])
-                    }
+                        sh 'mkdir perf_report/'
+                        sh 'locust --headless --users 5 --tag get --html perf_report/report.html --spawn-rate 1 --run-time 5 -H http://localhost:8100'
                 }
                 
             }
@@ -40,5 +35,10 @@ pipeline {
                 echo 'Destroying...'
             }
         }
-}
+    }
+    post {
+        always {
+            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: 'perf_report', reportFiles: 'report.html', reportName: 'Perf Report', reportTitles: 'Perf Report', useWrapperFileDirectly: true])
+        }
+    }
 }
