@@ -1,25 +1,18 @@
 pipeline {
-    agent none
+    agent any
     environment {
         REPO_NAME = ''
     }
     stages {
-        stage('Set Repo Name') {
-            steps {
-                script {
-                    def repoUrl = env.GIT_URL
-                    def repoName = repoUrl.tokenize('/').last().replaceAll('.git', '')
-                    env.REPO_NAME = repoName
-                }
-            }
-        }
         stage('Deploy') {
             agent {
                 label 'deployagent'
             }
             steps {
                 script {
-                    sh 'kubectl create namespace perf-${env.REPO_NAME}-${env.BUILD_ID}'
+                    sh 'kubectl create namespace perf-${BUILD_ID}'
+                    sh 'git clone https://github.com/Ziko17/django-app-chart.git'
+                    sh 'helm install django-app django-app-chart/ --values django-app-chart/values.yaml --set namespace="perf-${BUILD_ID}" --namespace perf-${BUILD_ID}'
                 }
             }
         }
@@ -31,18 +24,20 @@ pipeline {
                 script {
                         
                         sh 'mkdir perf_report/'
-                        sh 'locust --headless --users 5 --tag get --html perf_report/report.html --spawn-rate 1 --run-time 5 -H http://localhost:8100'
+                        sh 'locust --headless --users 5 --tag get --html perf_report/report.html --spawn-rate 1 --run-time 5 -H http://django-app-django-app-chart.perf-${BUILD_ID}.svc.cluster.local:8235'
                 }
                 
             }
         }
         stage('Destroy') { // If the infra does not get destroyed, the log of the rest of its existance must be dumped also
             agent {
-                label 'testagent'
+                label 'deployagent'
             }
             steps {
                 input message: 'Do you want to destroy the infra now ? If you choose no, the infra will be destroyed after 3 days.', ok: 'Yes', submitterParameter: 'APPROVER' //submitterParameter adds a link to a submit page 
                 echo 'Destroying...'
+                sh 'helm uninstall django-app --namespace perf-${BUILD_ID}'
+                sh 'kubectl delete ns perf-${BUILD_ID}'
             }
         }
     }
