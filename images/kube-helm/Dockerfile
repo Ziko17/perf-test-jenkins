@@ -4,7 +4,12 @@ FROM alpine/helm
 
 USER root
 
-RUN apk -U add openjdk11-jre
+# Install jre 11
+RUN apk -U add openjdk11-jre git
+
+# Install kubectl latest version
+RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
+    install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 
 RUN adduser -h /home/jenkins -S jenkins 
 

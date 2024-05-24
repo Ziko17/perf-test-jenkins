@@ -4,6 +4,8 @@ FROM python:3.10-alpine3.19
 
 RUN apk -U add openjdk11-jre git gcc musl-dev linux-headers
 
+RUN adduser -h /home/jenkins -S jenkins
+
 USER jenkins
 
 RUN pip3 install locust==2.27.0

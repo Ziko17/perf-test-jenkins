@@ -3,20 +3,22 @@ pipeline {
     stages {
         stage('Deploy') {
             agent {
-                label 'helmagent'
+                label 'deployagent'
             }
             steps {
                 script {
-                    sh 'helm list'
+                    GIT_REPO = env.GIT_URL.replaceFirst(/^.*\/([^\/]+?).git$/, '$1')
+                    sh 'kubectl create namespace perf-${GIT_REPO}-${BUILD_ID}'
                 }
             }
         }
         stage('Perf test') { // Dump logs & Threads
             agent {
-                label 'kubeagent'
+                label 'testagent'
             }
             steps {
                 script {
+                        
                         sh 'mkdir perf_report/'
                         sh 'locust --headless --users 5 --tag get --html perf_report/report.html --spawn-rate 1 --run-time 5 -H http://localhost:8100'
                 }
