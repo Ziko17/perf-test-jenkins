@@ -1,18 +1,15 @@
 pipeline {
     agent any
     environment {
-        REPO_NAME = """${sh(
+        NAMESPACE = """${sh(
                 returnStdout: true,
-                script: 'basename ${GIT_URL} .git'
+                script: 'echo "perf-$(basename ${GIT_URL} .git)-$BUILD_ID'
             )}"""
     }
     stages {
         stage('Test') {
-            agent {
-                label 'deployagent'
-            }
             steps {
-                sh 'echo ${REPO_NAME}'
+                sh 'echo ${NAMESPACE}'
             }
         }
         // stage('Deploy') {
