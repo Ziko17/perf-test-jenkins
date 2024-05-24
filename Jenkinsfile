@@ -1,15 +1,25 @@
 pipeline {
     agent none
+    environment {
+        REPO_NAME = ''
+    }
     stages {
+        stage('Set Repo Name') {
+            steps {
+                script {
+                    def repoUrl = env.GIT_URL
+                    def repoName = repoUrl.tokenize('/').last().replaceAll('.git', '')
+                    env.REPO_NAME = repoName
+                }
+            }
+        }
         stage('Deploy') {
             agent {
                 label 'deployagent'
             }
             steps {
                 script {
-                    sh 'repoUrl = "${GIT_URL}"'
-                    sh 'repoName = $repoUrl.tokenize('/').last().replaceAll('.git', '')'
-                    sh 'kubectl create namespace perf-${repoName}-${BUILD_ID}'
+                    sh 'kubectl create namespace perf-${env.REPO_NAME}-${env.BUILD_ID}'
                 }
             }
         }
