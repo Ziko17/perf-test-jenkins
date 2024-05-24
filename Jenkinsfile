@@ -7,8 +7,8 @@ pipeline {
             }
             steps {
                 script {
-                    def repoUrl = $GIT_URL
-                    def repoName = repoUrl.tokenize('/').last().replaceAll('.git', '')
+                    sh 'repoUrl = "${GIT_URL}"'
+                    sh 'repoName = $repoUrl.tokenize('/').last().replaceAll('.git', '')'
                     sh 'kubectl create namespace perf-${repoName}-${BUILD_ID}'
                 }
             }
