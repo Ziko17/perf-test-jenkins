@@ -3,7 +3,7 @@ pipeline {
     environment {
         NAMESPACE = """${sh(
                 returnStdout: true,
-                script: 'echo "perf-$(basename ${GIT_URL} .git)-$BUILD_ID'
+                script: 'echo "perf-$(basename ${GIT_URL} .git)-$BUILD_ID"'
             )}"""
     }
     stages {
