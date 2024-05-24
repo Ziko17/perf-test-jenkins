@@ -24,7 +24,14 @@ pipeline {
                 script {
                         
                         sh 'mkdir perf_report/'
-                        sh 'locust --headless --users 5 --tag get --html perf_report/report.html --spawn-rate 1 --run-time 5 -H http://django-app-django-app-chart.perf-${BUILD_ID}.svc.cluster.local:8235'
+                        try {
+                            sh 'locust --headless --users 5 --tag get --html perf_report/report.html --spawn-rate 1 --run-time 5 -H http://django-app-django-app-chart.perf-${BUILD_ID}.svc.cluster.local:8235'
+                            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: 'perf_report', reportFiles: 'report.html', reportName: 'Perf Report', reportTitles: 'Perf Report', useWrapperFileDirectly: true])
+                        }
+                        catch(err) {
+                            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: 'perf_report', reportFiles: 'report.html', reportName: 'Perf Report', reportTitles: 'Perf Report', useWrapperFileDirectly: true])
+                        }
+                        
                 }
                 
             }
@@ -39,11 +46,6 @@ pipeline {
                 sh 'helm uninstall django-app --namespace perf-${BUILD_ID}'
                 sh 'kubectl delete ns perf-${BUILD_ID}'
             }
-        }
-    }
-    post {
-        always {
-            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: 'perf_report', reportFiles: 'report.html', reportName: 'Perf Report', reportTitles: 'Perf Report', useWrapperFileDirectly: true])
         }
     }
 }
