@@ -7,7 +7,7 @@ pipeline {
             }
             steps {
                 script {
-                    sh 'helm list --kube-apiserver https://192.168.49.2:8443 --kube-insecure-skip-tls-verify=true '
+                    sh 'helm list'
                 }
             }
         }
