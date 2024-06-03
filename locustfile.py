@@ -3,6 +3,7 @@ import re
 import random
 import string
 
+
 class UserBehavior(TaskSet):
 
 

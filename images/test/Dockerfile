@@ -6,7 +6,7 @@ RUN apk -U add openjdk11-jre git gcc musl-dev linux-headers
 
 RUN adduser -h /home/jenkins -S jenkins
 
-RUN pip3 install locust==2.27.0
+RUN pip3 install locust==2.28.0
 
 USER jenkins
 

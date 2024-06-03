@@ -20,6 +20,7 @@ pipeline {
             }
             steps {
                 script {
+                    sh 'locust --version'
                     sh 'kubectl create namespace ${NAMESPACE}'
                     sh 'git clone https://github.com/Ziko17/django-app-chart.git'
                     sh 'helm install django-app django-app-chart/ --values django-app-chart/values.yaml --set namespace="${NAMESPACE}" --namespace ${NAMESPACE}'
@@ -35,7 +36,7 @@ pipeline {
                         
                         sh 'mkdir perf_report/'
                         try {
-                            sh 'locust --headless --users 5 --tag get --html perf_report/report.html --spawn-rate 1 --run-time 5 -H http://django-app-django-app-chart.${NAMESPACE}.svc.cluster.local:8235'
+                            sh 'locust --headless --users 5 --tag get --html perf_report/report.html --spawn-rate 1 --run-time 10 -H http://django-app-django-app-chart.${NAMESPACE}.svc.cluster.local:8235'
                             publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: 'perf_report', reportFiles: 'report.html', reportName: 'Perf Report', reportTitles: 'Perf Report', useWrapperFileDirectly: true])
                         }
                         catch(err) {

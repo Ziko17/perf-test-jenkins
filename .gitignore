@@ -1,3 +1,4 @@
 .ssh/
 perf_venv/
 __pycache__/
+*.html
